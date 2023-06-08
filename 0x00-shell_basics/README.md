@@ -7,4 +7,5 @@ my 5-listfilesdigitonly contains my script to hidden files , long format and use
 my 7-movethatfile contains answer to mv betty
 my 8-firstdelete contains removing of betty
 my 9-firstdirdeletion contain script to remove my_first_directory
-MY 10-back contains go back to previous current directory  
+MY 10-back contains go back to previous current directory 
+My 11-lists list everything in current directory , in parent of this currnet directory and in /boot 
