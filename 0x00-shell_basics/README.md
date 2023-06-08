@@ -6,4 +6,5 @@ my 4-listmorefiles  contains my script to hidden files
 my 5-listfilesdigitonly contains my script to hidden files , long format and user and groups IDsmy 6-firstdirectory contains a script that creates a directory named my_first_directory in the /tmp/ directory.
 my 7-movethatfile contains answer to mv betty
 my 8-firstdelete contains removing of betty
-my 9-firstdirdeletion contain script to remove my_first_directory  
+my 9-firstdirdeletion contain script to remove my_first_directory
+MY 10-back contains go back to previous current directory  
