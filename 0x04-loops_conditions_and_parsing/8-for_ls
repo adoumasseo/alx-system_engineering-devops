@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# List all file in . using a specific format
+files=$(ls)
+for file in $files; do
+	echo "$file" | cut -d'-' -f2
+done
