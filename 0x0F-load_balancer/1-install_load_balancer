@@ -1,37 +1,54 @@
 #!/usr/bin/env bash
-# Installs and setup HAProxy
+# Install and configure HAproxy on your lb-01 server.
 
-apt-get install -y software-properties-common
-add-apt-repository -y ppa:vbernat/haproxy-1.8
-apt-get -y update
-apt-get install -y haproxy=1.8.\*
-echo "ENABLED=1" > /etc/default/haproxy
-echo "
+# Install HAProxy
+sudo apt-get update
+sudo apt-get install -y haproxy
+
+# Enable HAProxy
+echo "ENABLED=1" >> /etc/default/haproxy
+
+# Backup existing configuration
+cp /etc/haproxy/haproxy.cfg /etc/haproxy/haproxy.cfg.original
+
+# Create a new configuration file
+cat <<EOL > /etc/haproxy/haproxy.cfg
 global
-    log /dev/log local0
-    log /dev/log local1 notice
-    chroot /var/lib/haproxy
-    stats socket /run/haproxy/admin.sock mode 660
-    stats timeout 30s
+    log 127.0.0.1 local0 notice
+    maxconn 2000
     user haproxy
     group haproxy
-    daemon
 
 defaults
-    log     global
-    option  httplog
-    option  dontlognull
-    timeout connect 5000ms
-    timeout client  50000ms
-    timeout server  50000ms
-
-listen load_balancer
-    bind *:80
+    log global
     mode http
+    option httplog
+    option dontlognull
+    retries 3
+    option redispatch
+    timeout connect 5000
+    timeout client 30000
+    timeout server 30000
+    errorfile 400 /etc/haproxy/errors/400.http
+    errorfile 403 /etc/haproxy/errors/403.http
+    errorfile 408 /etc/haproxy/errors/408.http
+    errorfile 500 /etc/haproxy/errors/500.http
+    errorfile 502 /etc/haproxy/errors/502.http
+    errorfile 503 /etc/haproxy/errors/503.http
+    errorfile 504 /etc/haproxy/errors/504.http
+
+frontend http-in
+    timeout client 30000
+    bind 0:80
+    default_backend servers
+
+backend servers
+    timeout connect 3000
+    timeout server 30000
     balance roundrobin
-    option httpclose
-    option forwardfor
-    server web1 44.200.83.158:80 check
-    server web2 3.237.16.226:80 check
-" > /etc/haproxy/haproxy.cfg
-service haproxy start
+    server 332879-web-01 18.208.120.129:80 check
+    server 332879-web-02 100.26.151.108:80 check
+EOL
+
+# Restart HAProxy
+service haproxy restart
